@@ -114,29 +114,25 @@ Exports include PDF, CSV, and Excel outputs for external review.
 
 ## Architecture
 
-```text
-┌──────────────────────────────────────────────────────────┐
-│                      FRONTEND                            │
-│         React · TypeScript · Vite · Tailwind             │
-│              Recharts · shadcn/ui                        │
-├──────────────────────────────────────────────────────────┤
-│                      REST API                            │
-│         FastAPI · SQLAlchemy · Alembic                   │
-│         RBAC Middleware · Audit Logger                   │
-├──────────────────────────────────────────────────────────┤
-│                     DATA LAYER                           │
-│         PostgreSQL · Immutable Snapshots                 │
-│         Decimal-Safe NAV Engine                          │
-├──────────────────────────────────────────────────────────┤
-│                   INTELLIGENCE                           │
-│         Analytics Engine · Anomaly Detector              │
-│         Scenario Simulator · Forecasting                 │
-│         Gemini API (server-side, guarded)                │
-├──────────────────────────────────────────────────────────┤
-│                   DEPLOYMENT                             │
-│         Render Blueprint · PostgreSQL Managed            │
-│         Secrets-Safe Config · CORS Enforced              │
-└──────────────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+  UI[React + TypeScript + Tailwind + Recharts]
+  API[FastAPI]
+  NAV[NAV Engine\nAllocation\nReconciliation]
+  INTEL[Analytics + Anomalies\nScenarios + Forecast]
+  COPILOT[Guardrailed Copilot]
+  DB[(PostgreSQL)]
+  REP[PDF/CSV/Excel Reports]
+
+  UI --> API
+  API --> NAV
+  API --> INTEL
+  API --> COPILOT
+  NAV --> DB
+  INTEL --> DB
+  COPILOT --> DB
+  API --> REP
+  REP --> DB
 ```
 
 ### Tech Stack

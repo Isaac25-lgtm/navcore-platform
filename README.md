@@ -1,192 +1,266 @@
-﻿# NAVCore Platform
-### Multi-Club NAV Fund Operating System (Audit-Ready + Explainable Intelligence)
+<div align="center">
 
-NAVCore is a production-focused fintech platform for fund operators running **multiple independent investment clubs** with strict accounting controls:
+# NAVCore Platform
 
-- No cross-club money leakage
-- Deterministic NAV math with exact reconciliation gates
-- Immutable close-month snapshots
-- Explainable analytics + AI Copilot in Intelligent Mode
+**Multi-Club NAV Fund Operating System — Audit-Ready + Explainable Intelligence**
 
-If you are evaluating engineering quality for hiring, this project demonstrates full-stack ownership across:
-**financial domain modeling, deterministic computation, risk controls, product UX, audit trails, and deployable infrastructure**.
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![AI Powered](https://img.shields.io/badge/AI%20Powered-Gemini%20Copilot-ff6f00?style=for-the-badge&logo=google&logoColor=white)](#-intelligent-mode--ai-copilot)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-## Why This Project Is Hard To Ignore
-- Built around a real accounting truth model (not dashboard-only mock data)
-- Enforces period immutability and adjustment-only corrections after close
-- Uses server-side RBAC + club isolation + audit logs for every critical mutation
-- Ships both operational workflow (Basic Mode) and decision support (Intelligent Mode)
-- Includes deployment blueprint for Render + PostgreSQL with secrets-safe config
+A production-grade **Net Asset Value fund platform** for operating multiple independent investment clubs under one company with **locked monthly closes, auditable reconciliation, investor-level allocations**, and an **Intelligent Mode** with explainable analytics and an **AI Copilot**.
+
+[Getting Started](#-getting-started) · [Architecture](#-architecture) · [API Surface](#-api-surface) · [Deploy](#-deploy-on-render)
+
+</div>
+
+---
+
+## Why This Exists
+
+Most investment dashboards stop at charts. NAVCore enforces accounting truth:
+
+> **NAV is the source of truth.**
+> Every investor balance, allocation, and report must reconcile back to NAV, or the system blocks close.
+
+This repository demonstrates production-grade fintech engineering across:
+- financial domain modeling
+- deterministic computation
+- risk controls and period immutability
+- auditability and exports
+- deployable full-stack architecture
+
+---
 
 ## Core Accounting Model
-Monthly NAV for each club:
 
-`Opening NAV + Contributions - Withdrawals + Income - Expenses = Closing NAV`
+### Monthly NAV Formula
 
-Allocation rules:
+```text
+Opening NAV + Contributions - Withdrawals + Income - Expenses = Closing NAV
+```
 
-- `ownership% = investor opening balance / club opening NAV`
-- income and expense allocation follow ownership%
-- investor closing balance:
-  `opening + net_alloc + contributions - withdrawals`
-- reconciliation rule:
-  `sum(investor closing balances) == club closing NAV` exactly
+### Allocation Rules
 
-Closed periods are immutable. Corrections are posted as adjustments into a later open period.
+| Rule | Formula |
+|---|---|
+| Ownership % | `investor_opening_balance / club_opening_nav` |
+| Income/expense allocation | by ownership % |
+| Investor closing balance | `opening + net_alloc + contributions - withdrawals` |
+| Reconciliation gate | `SUM(investor_closing_balances) == club_closing_nav` exactly |
+
+Closed periods are immutable. Corrections are posted to a later open period as adjustments.
+
+---
 
 ## Product Modes
-| Mode | Purpose | Features |
-|---|---|---|
-| Basic | Operational execution | Clubs, Investors, Ledger CRUD, Close Month checklist + reconciliation gate, Reports |
-| Intelligent | Decision support | Insights feed, anomaly detection, scenario simulator, forecasting, allocation explainability, Co Pilot |
 
-## High-Impact Features
+| Mode | Purpose | Capabilities |
+|---|---|---|
+| **Basic** | Operations | Clubs, investors, memberships, ledger CRUD, close workflow, reports |
+| **Intelligent** | Decision support | Insights, anomalies, scenarios, forecast, allocation explainability, AI Copilot |
+
+---
+
+## Intelligent Mode + AI Copilot
+
+Intelligent Mode adds decision support while preserving identical accounting truth from Basic Mode.
+
+- **Insights Feed**: ranked NAV drivers with evidence
+- **Integrity & Anomalies**: duplicates, outliers, backdated entries, missing categories, mismatch checks
+- **Scenario Simulator**: best/base/worst projections and goal-based contribution calculator
+- **Forecast Panel**: rolling average + regression with confidence bands
+- **Allocation Explainability**: investor-level ownership and allocation breakdown
+- **AI Copilot (Gemini-powered)**:
+  - read-only by default
+  - strictly scoped to selected club + period
+  - cites sources (`period_id`, `snapshot_id`, transaction references)
+  - refuses mutation requests and closed-period tampering
+
+---
+
+## High-Impact Engineering
+
 ### 1) Multi-Club Isolation + RBAC
-- Roles: `Admin`, `Fund Accountant`, `Advisor`, `Investor`
-- Club access enforced on server
-- Cross-club and cross-tenant access blocked
+
+Roles: `Admin`, `Fund Accountant`, `Advisor`, `Investor`.  
+Server-side club isolation and access controls prevent cross-club leakage.
 
 ### 2) Deterministic NAV Engine
-- Decimal-safe computation (`ROUND_HALF_UP` policy)
-- Reconciliation stamp:
-  - `Reconciled ✅`
-  - `Mismatch ❌ UGX X` (close blocked)
+
+All money math uses decimal-safe arithmetic with `ROUND_HALF_UP`.
+
+```text
+Reconciled ✅       -> close allowed
+Mismatch ❌ UGX X  -> close blocked
+```
 
 ### 3) Close-Month Controls
-- Draft -> Review -> Closed lifecycle
-- Checklist gate for close action
-- Immutable snapshots (`nav_snapshots`, `investor_balances`)
+
+Period lifecycle: `Draft -> Review -> Closed`.  
+Closed months produce immutable snapshots in `nav_snapshots` and `investor_balances`.
 
 ### 4) Audit + Export Readiness
-- Audit log for create/update/delete/close actions
-- PDF reports from closed snapshots
-- CSV/Excel exports for regulator-friendly workflows
 
-### 5) Intelligent Mode (Explainable)
-- Insight ranking for NAV change drivers
-- Anomaly detection (duplicates, outliers, backdated entries, incomplete postings, mismatch)
-- Scenario simulator (best/base/worst band + goal contribution calculator)
-- Forecasting (rolling average + linear regression with confidence band)
-- Allocation explainability panel for investor-level decomposition
+Audit log captures create/update/delete/close actions.  
+Exports include PDF, CSV, and Excel outputs for external review.
 
-### 6) AI Co Pilot (Guardrailed)
-- Read-only by default
-- Strictly scoped to selected `club + period`
-- Cites sources in UI (`period_id`, `snapshot_id`, transaction references)
-- Refuses mutation requests and closed-period tampering
+---
 
 ## Architecture
-```mermaid
-flowchart LR
-  UI[React + TypeScript + Tailwind + Recharts]
-  API[FastAPI]
-  NAV[NAV Engine\nAllocation\nReconciliation]
-  INTEL[Analytics + Anomalies\nScenarios + Forecast]
-  COPILOT[Guardrailed Co Pilot]
-  DB[(PostgreSQL)]
-  REP[PDF/CSV/Excel Reports]
 
-  UI --> API
-  API --> NAV
-  API --> INTEL
-  API --> COPILOT
-  NAV --> DB
-  INTEL --> DB
-  COPILOT --> DB
-  API --> REP
-  REP --> DB
+```text
+┌──────────────────────────────────────────────────────────┐
+│                      FRONTEND                            │
+│         React · TypeScript · Vite · Tailwind             │
+│              Recharts · shadcn/ui                        │
+├──────────────────────────────────────────────────────────┤
+│                      REST API                            │
+│         FastAPI · SQLAlchemy · Alembic                   │
+│         RBAC Middleware · Audit Logger                   │
+├──────────────────────────────────────────────────────────┤
+│                     DATA LAYER                           │
+│         PostgreSQL · Immutable Snapshots                 │
+│         Decimal-Safe NAV Engine                          │
+├──────────────────────────────────────────────────────────┤
+│                   INTELLIGENCE                           │
+│         Analytics Engine · Anomaly Detector              │
+│         Scenario Simulator · Forecasting                 │
+│         Gemini API (server-side, guarded)                │
+├──────────────────────────────────────────────────────────┤
+│                   DEPLOYMENT                             │
+│         Render Blueprint · PostgreSQL Managed            │
+│         Secrets-Safe Config · CORS Enforced              │
+└──────────────────────────────────────────────────────────┘
 ```
 
-## Tech Stack
-- Frontend: React, TypeScript, Vite, Tailwind, Recharts
-- Backend: FastAPI, SQLAlchemy, Alembic
-- Database: PostgreSQL
-- Testing: Pytest
-- Reporting: ReportLab + OpenPyXL
-- AI: Gemini API (via server-side guarded endpoint)
+### Tech Stack
 
-## Repository Structure
+| Layer | Technology |
+|---|---|
+| Frontend | React, TypeScript, Vite, Tailwind CSS, Recharts |
+| Backend | FastAPI, SQLAlchemy, Alembic |
+| Database | PostgreSQL |
+| Testing | Pytest |
+| Reporting | ReportLab, OpenPyXL |
+| AI | Gemini API via guarded backend endpoint |
+| Deployment | Render Blueprint |
+
+### Repository Structure
+
 ```text
 .
-├─ src/                  # Frontend app
-├─ backend/
-│  ├─ app/               # FastAPI app (routes, models, services)
-│  ├─ alembic/           # Migrations
-│  ├─ tests/             # Unit/integration tests
-│  ├─ scripts/           # Synthetic data seeding
-│  └─ docs/              # Security/audit/deployment notes
-├─ render.yaml           # Render deployment blueprint
-└─ README.md
+├── src/
+├── backend/
+│   ├── app/
+│   ├── alembic/
+│   ├── tests/
+│   ├── scripts/
+│   └── docs/
+├── render.yaml
+└── README.md
 ```
 
-## Local Run (Windows)
-### 1) Frontend
-```powershell
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- Python 3.12+
+- PostgreSQL
+
+### Frontend
+
+```bash
 npm ci
 npm run dev -- --host 127.0.0.1 --port 5173
 ```
 
-### 2) Backend
-```powershell
+### Backend
+
+```bash
 cd backend
-C:\Users\USER\AppData\Local\Programs\Python\Python312\python.exe -m pip install -r requirements.txt
-C:\Users\USER\AppData\Local\Programs\Python\Python312\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+pip install -r requirements.txt
+uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-### 3) Seed synthetic data (optional)
-```powershell
+### Seed Synthetic Data (Optional)
+
+```bash
 cd backend
-$env:PYTHONPATH='.'
-C:\Users\USER\AppData\Local\Programs\Python\Python312\python.exe scripts/seed_synthetic_data.py
+PYTHONPATH=. python scripts/seed_synthetic_data.py
 ```
 
-## Testing
-```powershell
+### Tests
+
+```bash
 cd backend
-C:\Users\USER\AppData\Local\Programs\Python\Python312\python.exe -m pytest -q
+pytest -q
 ```
-
-## Deploy on Render (Blueprint)
-This repository includes `render.yaml` for one-click infrastructure provisioning:
-
-- `navcore-api` (FastAPI web service)
-- `navcore-web` (static frontend)
-- `navcore-postgres` (managed PostgreSQL)
-
-### Render steps
-1. Push this repo to GitHub.
-2. In Render, choose **Blueprint** and select this repo.
-3. Create stack.
-4. Set required secret env vars in Render:
-   - `GEMINI_API_KEY` (secret)
-5. Confirm backend `CORS_ORIGINS` matches frontend URL.
-
-## Security Notes (Important)
-- API keys are **not** committed in repository config.
-- Local secret files (`.env`, `backend/.env`) are gitignored.
-- Keep all secrets in Render environment variables / secret manager.
-
-## Key API Endpoints
-- Clubs/Investors/Memberships CRUD
-- Period state + status transitions
-- Ledger CRUD + bulk import
-- NAV preview / close / snapshot
-- Reconciliation checks
-- Analytics:
-  - `/analytics/metrics`
-  - `/analytics/insights`
-  - `/analytics/anomalies`
-  - `/analytics/scenarios`
-  - `/analytics/forecast`
-- Co Pilot:
-  - `/copilot/chat`
-
-## Employer Snapshot: What This Demonstrates
-- Translating financial policy into strict backend invariants
-- Designing for correctness first, then UX and explainability
-- Handling immutable snapshots + mutable drafts safely
-- Shipping a dual-mode product with role-aware capabilities
-- Delivering deployable DevOps artifacts, not just app code
 
 ---
-If you are a hiring manager or tech lead, this repo is intentionally built to show **production-minded fintech engineering** rather than demo-only UI work.
+
+## API Surface
+
+| Group | Endpoints |
+|---|---|
+| Core CRUD | `/clubs`, `/investors`, `/memberships` |
+| Periods | `/periods` (create/list/status/summary) |
+| Ledger | `/transactions`, `/ledger`, bulk import |
+| NAV | `/nav/preview`, `/nav/close`, `/nav/snapshot` |
+| Reconciliation | `/reconciliation` |
+| Reports | `/reports` + downloads |
+| Analytics | `/analytics/metrics`, `/analytics/insights`, `/analytics/anomalies`, `/analytics/scenarios`, `/analytics/forecast` |
+| Copilot | `/copilot/chat` (read-only, source-citing) |
+
+---
+
+## Deploy on Render
+
+`render.yaml` provisions:
+- `navcore-postgres` (managed PostgreSQL)
+- `navcore-api` (FastAPI)
+- `navcore-web` (static frontend)
+
+Steps:
+1. Push to GitHub
+2. Create Render Blueprint from repo
+3. Set secrets in Render environment
+4. Set `GEMINI_API_KEY` in secret env vars
+5. Verify backend `CORS_ORIGINS` matches frontend URL
+
+---
+
+## Security Posture
+
+- API keys are never committed
+- `.env` and `backend/.env` are gitignored
+- RBAC enforced server-side
+- club isolation enforced at API/data access level
+- audit logging for critical mutations
+- copilot guardrails for read-only scoped data access
+
+---
+
+## What This Demonstrates
+
+- translating accounting policy into enforceable backend invariants
+- building deterministic financial computation with reconciliation gates
+- combining immutable snapshots with operational draft workflows safely
+- delivering explainable AI-enabled decision support without breaking accounting truth
+- shipping production-ready deployment artifacts, not just app code
+
+---
+
+<div align="center">
+
+**Built by [Isaac Omoding](https://github.com/Isaac25-lgtm)**
+
+</div>

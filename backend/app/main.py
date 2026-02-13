@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import logging
 import time
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -64,6 +64,22 @@ async def request_log_and_rate_limit(request: Request, call_next):
 @app.get("/healthz")
 def healthz() -> dict:
     return {"ok": True, "timestamp": datetime.now(timezone.utc).isoformat()}
+
+
+@app.get("/", include_in_schema=False)
+def root() -> dict[str, str]:
+    return {
+        "service": settings.app_name,
+        "status": "ok",
+        "health": "/healthz",
+        "api_root": f"{settings.api_prefix}/health",
+        "docs": "/docs",
+    }
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon() -> Response:
+    return Response(status_code=204)
 
 
 app.include_router(api_router, prefix=settings.api_prefix)

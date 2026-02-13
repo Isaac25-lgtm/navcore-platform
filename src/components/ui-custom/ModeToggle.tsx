@@ -1,5 +1,5 @@
-﻿import { Sparkles } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Sparkles } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Mode } from '@/types/platform';
 
 interface ModeToggleProps {
@@ -8,18 +8,20 @@ interface ModeToggleProps {
 }
 
 export function ModeToggle({ mode, onChange }: ModeToggleProps) {
+  const modeLabel = mode === 'intelligent' ? 'Intelligent Mode' : 'Basic Mode';
+
   return (
-    <button
-      onClick={() => onChange(mode === 'basic' ? 'intelligent' : 'basic')}
-      className={cn(
-        'h-9 px-3 text-xs rounded-lg border transition-colors flex items-center gap-1.5',
-        mode === 'intelligent'
-          ? 'bg-blue-500/20 text-blue-200 border-blue-400/40'
-          : 'bg-white/5 text-slate-300 border-white/10',
-      )}
-    >
-      <Sparkles className="w-3.5 h-3.5" />
-      {mode === 'intelligent' ? 'Intelligent' : 'Basic'}
-    </button>
+    <div className="flex items-center gap-1.5">
+      <Sparkles className="w-3.5 h-3.5 text-blue-300" />
+      <Select value={mode} onValueChange={(value) => onChange(value as Mode)}>
+        <SelectTrigger className="h-9 w-[158px] bg-white/5 border-white/10 text-slate-200 text-xs">
+          <SelectValue aria-label={modeLabel}>{modeLabel}</SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="basic">Basic Mode</SelectItem>
+          <SelectItem value="intelligent">Intelligent Mode</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
   );
 }

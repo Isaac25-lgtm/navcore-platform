@@ -166,6 +166,14 @@ export function TopNav({ activeView, onViewChange, onToggleSidebar, theme, onTog
               Read-only
             </span>
           )}
+          <span
+            className={cn(
+              'text-xs px-2 py-1 rounded-full font-medium',
+              mode === 'intelligent' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700',
+            )}
+          >
+            {mode === 'intelligent' ? 'Intelligent Mode' : 'Basic Mode'}
+          </span>
           <ModeToggle mode={mode} onChange={handleModeChange} />
           <button
             onClick={onToggleTheme}

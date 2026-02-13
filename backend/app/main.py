@@ -74,4 +74,8 @@ def startup_event() -> None:
     if settings.auto_create_schema:
         Base.metadata.create_all(bind=engine)
     with SessionLocal() as db:
-        seed_demo_data(db)
+        try:
+            seed_demo_data(db)
+        except Exception:  # pragma: no cover - startup seed should never block service boot
+            db.rollback()
+            logger.exception("Skipping demo seed due to startup error.")

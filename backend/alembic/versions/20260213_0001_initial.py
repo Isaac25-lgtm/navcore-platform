@@ -9,6 +9,7 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.dialects import postgresql
 
 
 # revision identifiers, used by Alembic.
@@ -19,12 +20,36 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    role_name = sa.Enum("admin", "manager", "analyst", "viewer", name="role_name")
-    period_status = sa.Enum("draft", "review", "closed", name="period_status")
-    ledger_entry_type = sa.Enum(
-        "contribution", "withdrawal", "income", "expense", "adjustment", name="ledger_entry_type"
+    role_name = postgresql.ENUM(
+        "admin",
+        "manager",
+        "analyst",
+        "viewer",
+        name="role_name",
+        create_type=False,
     )
-    report_type = sa.Enum("monthly_club", "investor_statement", name="report_type")
+    period_status = postgresql.ENUM(
+        "draft",
+        "review",
+        "closed",
+        name="period_status",
+        create_type=False,
+    )
+    ledger_entry_type = postgresql.ENUM(
+        "contribution",
+        "withdrawal",
+        "income",
+        "expense",
+        "adjustment",
+        name="ledger_entry_type",
+        create_type=False,
+    )
+    report_type = postgresql.ENUM(
+        "monthly_club",
+        "investor_statement",
+        name="report_type",
+        create_type=False,
+    )
 
     role_name.create(op.get_bind(), checkfirst=True)
     period_status.create(op.get_bind(), checkfirst=True)
@@ -222,15 +247,38 @@ def downgrade() -> None:
     op.drop_index("ix_clubs_id", table_name="clubs")
     op.drop_table("clubs")
 
-    report_type = sa.Enum("monthly_club", "investor_statement", name="report_type")
-    ledger_entry_type = sa.Enum(
-        "contribution", "withdrawal", "income", "expense", "adjustment", name="ledger_entry_type"
+    report_type = postgresql.ENUM(
+        "monthly_club",
+        "investor_statement",
+        name="report_type",
+        create_type=False,
     )
-    period_status = sa.Enum("draft", "review", "closed", name="period_status")
-    role_name = sa.Enum("admin", "manager", "analyst", "viewer", name="role_name")
+    ledger_entry_type = postgresql.ENUM(
+        "contribution",
+        "withdrawal",
+        "income",
+        "expense",
+        "adjustment",
+        name="ledger_entry_type",
+        create_type=False,
+    )
+    period_status = postgresql.ENUM(
+        "draft",
+        "review",
+        "closed",
+        name="period_status",
+        create_type=False,
+    )
+    role_name = postgresql.ENUM(
+        "admin",
+        "manager",
+        "analyst",
+        "viewer",
+        name="role_name",
+        create_type=False,
+    )
 
     report_type.drop(op.get_bind(), checkfirst=True)
     ledger_entry_type.drop(op.get_bind(), checkfirst=True)
     period_status.drop(op.get_bind(), checkfirst=True)
     role_name.drop(op.get_bind(), checkfirst=True)
-

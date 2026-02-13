@@ -39,9 +39,7 @@ This repository demonstrates production-grade fintech engineering across:
 
 ## Analytics Preview
 
-<div align="center">
-  <img src="assets/analytics-preview.svg" alt="NAVCore analytics interface preview" width="100%" />
-</div>
+![NAVCore analytics interface preview](./assets/analytics-preview.svg)
 
 ---
 
@@ -265,7 +263,7 @@ Steps:
 
 ## Languages
 
-![Language distribution](assets/languages-bar.svg)
+![Language distribution](./assets/languages-bar.svg)
 
 | Language | Share |
 |---|---|

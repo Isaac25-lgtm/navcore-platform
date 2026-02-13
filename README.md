@@ -37,6 +37,14 @@ This repository demonstrates production-grade fintech engineering across:
 
 ---
 
+## Analytics Preview
+
+<div align="center">
+  <img src="assets/analytics-preview.svg" alt="NAVCore analytics interface preview" width="100%" />
+</div>
+
+---
+
 ## Core Accounting Model
 
 ### Monthly NAV Formula

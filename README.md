@@ -255,6 +255,19 @@ Steps:
 
 ---
 
+## Languages
+
+![Language distribution](assets/languages-bar.svg)
+
+| Language | Share |
+|---|---|
+| TypeScript | 60.5% |
+| Python | 37.8% |
+| CSS | 1.1% |
+| Other | 0.6% |
+
+---
+
 <div align="center">
 
 **Built by [Isaac Omoding](https://github.com/Isaac25-lgtm)**

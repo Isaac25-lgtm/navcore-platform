@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 220" role="img" aria-label="Language distribution">
+  <title>Language Distribution</title>
+  <rect x="80" y="48" width="1000" height="34" rx="8" fill="#E5E7EB"/>
+  <rect x="80" y="48" width="605" height="34" rx="8" fill="#3178C6"/>
+  <rect x="685" y="48" width="378" height="34" fill="#2DA44E"/>
+  <rect x="1063" y="48" width="11" height="34" fill="#F59E0B"/>
+  <rect x="1074" y="48" width="6" height="34" rx="8" fill="#6B7280"/>
+
+  <circle cx="92" cy="128" r="8" fill="#3178C6"/>
+  <text x="110" y="133" font-size="18" font-family="Segoe UI, Arial, sans-serif" fill="#0F172A">TypeScript 60.5%</text>
+
+  <circle cx="385" cy="128" r="8" fill="#2DA44E"/>
+  <text x="403" y="133" font-size="18" font-family="Segoe UI, Arial, sans-serif" fill="#0F172A">Python 37.8%</text>
+
+  <circle cx="650" cy="128" r="8" fill="#F59E0B"/>
+  <text x="668" y="133" font-size="18" font-family="Segoe UI, Arial, sans-serif" fill="#0F172A">CSS 1.1%</text>
+
+  <circle cx="830" cy="128" r="8" fill="#6B7280"/>
+  <text x="848" y="133" font-size="18" font-family="Segoe UI, Arial, sans-serif" fill="#0F172A">Other 0.6%</text>
+</svg>

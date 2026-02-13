@@ -1,14 +1,8 @@
-﻿# Render Blueprint for NAVCore Platform
+# Render Blueprint for NAVCore Platform
 # Deploys:
 # 1) FastAPI backend (web service)
 # 2) React/Vite frontend (static site)
-# 3) Managed PostgreSQL database
-
-databases:
-  - name: navcore-postgres
-    databaseName: navcore
-    user: navcore
-    plan: starter
+# Uses external PostgreSQL (e.g., Neon) via DATABASE_URL secret.
 
 services:
   - type: web
@@ -25,9 +19,7 @@ services:
       - key: PYTHON_VERSION
         value: 3.12.2
       - key: DATABASE_URL
-        fromDatabase:
-          name: navcore-postgres
-          property: connectionString
+        sync: false
       - key: APP_NAME
         value: NAVCore API
       - key: API_PREFIX

@@ -88,7 +88,7 @@ export function InvestorsView() {
   const [deleteTarget, setDeleteTarget] = useState<InvestorSummary | null>(null);
   const [working, setWorking] = useState(false);
 
-  const { selectedClubId, periodState, refreshing, locked, refresh } = usePlatform();
+  const { selectedClubId, periodState, locked, refresh } = usePlatform();
 
   const loadInvestors = useCallback(async () => {
     if (!selectedClubId) {

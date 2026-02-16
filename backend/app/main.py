@@ -1,4 +1,5 @@
 from collections import defaultdict, deque
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 import logging
 import time
@@ -14,9 +15,38 @@ from app.db.session import SessionLocal, engine
 from app.services.seed import seed_demo_data
 
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s [%(name)s] %(message)s",
+)
+
 settings = get_settings()
-app = FastAPI(title=settings.app_name, debug=settings.debug)
 logger = logging.getLogger("navfund.api")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # ── startup ──
+    if settings.auto_create_schema:
+        Base.metadata.create_all(bind=engine)
+    with SessionLocal() as db:
+        try:
+            seed_demo_data(db)
+        except Exception:
+            db.rollback()
+            logger.exception("Skipping demo seed due to startup error.")
+    logger.info("NAVCore API ready.")
+    yield
+    # ── shutdown ──
+    engine.dispose()
+    logger.info("NAVCore API shutdown complete.")
+
+
+app = FastAPI(
+    title=settings.app_name,
+    debug=settings.debug,
+    lifespan=lifespan,
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -83,15 +113,3 @@ def favicon() -> Response:
 
 
 app.include_router(api_router, prefix=settings.api_prefix)
-
-
-@app.on_event("startup")
-def startup_event() -> None:
-    if settings.auto_create_schema:
-        Base.metadata.create_all(bind=engine)
-    with SessionLocal() as db:
-        try:
-            seed_demo_data(db)
-        except Exception:  # pragma: no cover - startup seed should never block service boot
-            db.rollback()
-            logger.exception("Skipping demo seed due to startup error.")

@@ -139,6 +139,7 @@ function App() {
   });
   const {
     loading,
+    refreshing,
     error,
     locked,
     status,
@@ -281,7 +282,11 @@ function App() {
       >
         <div className="p-6">
           {loading ? (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 text-sm text-slate-500">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 text-sm text-slate-500 flex items-center gap-2">
+              <svg className="animate-spin h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
               Loading platform context...
             </div>
           ) : (
@@ -297,6 +302,12 @@ function App() {
                   <p className="text-xs text-slate-500 mt-0.5">Status: {status}</p>
                 </div>
                 <div className="flex items-center gap-2">
+                  {refreshing && (
+                    <svg className="animate-spin h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                  )}
                   {(status === 'draft' || status === 'review') && (
                     <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-medium">
                       Preview

@@ -88,7 +88,7 @@ export function InvestorsView() {
   const [deleteTarget, setDeleteTarget] = useState<InvestorSummary | null>(null);
   const [working, setWorking] = useState(false);
 
-  const { selectedClubId, periodState, loading, locked, refresh } = usePlatform();
+  const { selectedClubId, periodState, refreshing, locked, refresh } = usePlatform();
 
   const loadInvestors = useCallback(async () => {
     if (!selectedClubId) {
@@ -448,7 +448,7 @@ export function InvestorsView() {
         </Button>
       </div>
 
-      {loading || crudLoading ? (
+      {crudLoading ? (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 text-sm text-slate-500">
           Loading investor positions...
         </div>
